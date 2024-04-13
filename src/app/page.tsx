@@ -1,113 +1,225 @@
-import Image from "next/image";
+'use client'
+import { useAppContext } from "../../context/appContext";
+import { useEffect, useState } from "react";
+import { AiOutlineMinusCircle, AiOutlinePlayCircle, AiOutlinePlusCircle } from "react-icons/ai";
+import { LuShoppingCart } from "react-icons/lu";
+
+import CartItem from "../../components/CartItem";
+import { CartInterface } from "../../utility/types";
+import { useRouter } from "next/navigation";
+
 
 export default function Home() {
+
+  const { serverIp } = useAppContext();
+  const router = useRouter();
+  const [cartList, setCartList] = useState([{ title: "", id: "", qty: "", price: "" }]);
+
+  const [cartItem, setCartItem] = useState<CartInterface[]>([]);
+
+  const [subTotal, setSubTotal] = useState(0);
+
+
+  const generateCartCode = () => {
+    return String(Date.now().toString())
+  }
+
+
+  const updateTotalPrice = (cartList: any) => {
+    let total = 0;
+    for (let i = 0; i < cartList.length; i++) {
+      const element = cartList[i];
+      if (element.qty > 0 && element.price > 0) {
+        const itemPrice = element.qty * element.price;
+        total += itemPrice;
+      }
+    }
+    setSubTotal(total);
+  };
+
+  const removeInputList = (index: number) => {
+    const values = [...cartList];
+    values.splice(index, 1);
+    setCartList(values);
+    updateTotalPrice(values)
+
+    //   toast.success(`Remove ${index +1} no. cartList !`, {
+    //     position: toast.POSITION.TOP_CENTER
+    // });
+
+
+  };
+
+  // const handleInputChange = (index:number, event:any)=>{
+
+  //   const values = [...cartList];
+  //   values[index][event.target.name] = event.target.value;
+  //   setCartList(values);
+  // }
+
+
+  // Input data change
+
+  const handleInputChange = (index: number, event: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = event.target;
+    const newCartList = cartList.map((item, i) => {
+      if (i === index) {
+        return { ...item, [name]: value };
+      }
+      return item;
+    });
+    setCartList(newCartList);
+  };
+
+
+  const handleSave = () => {
+
+
+    let totalPrice = 0;
+    for (let i = 0; i < cartList.length; i++) {
+      const element = cartList[i];
+
+      if (
+        element.title.length > 0 &&
+        element.id.length > 0 &&
+        Number(element.qty) > 0 &&
+        Number(element.price) > 0
+      ) {
+        const itemPrice = Number(element.qty) * Number(element.price);
+        totalPrice += itemPrice;
+      } else {
+        console.error("Please fill in all fields for item", i + 1);
+        return;
+      }
+    }
+
+    const cartCode = generateCartCode()
+    const cartData = { cartCode, cartList, totalPrice };
+
+    localStorage.setItem(cartCode, JSON.stringify(cartData));
+    setCartList([{ title: "", id: "", qty: "", price: "" }]);
+
+    // Update cartItem state with the new cartCode and totalPrice
+
+    setCartItem([...cartItem, { cartCode, totalPrice }]);
+
+    //   toast.success(`Product add in your localStorage !`, {
+    //     position: toast.POSITION.TOP_CENTER
+    // });
+  };
+
+
+  // Update total price on every cartList update
+
+  useEffect(() => {
+    updateTotalPrice(cartList);
+  }, [cartList])
+
+
+  const getStorageData = () => {
+    const keys = Object.keys(localStorage);
+    const filteredKeys = keys.filter((key) => key.length >= 12 && !isNaN(Number(key)));
+
+    const data = filteredKeys.map((key) => {
+      const value = JSON.parse(String(localStorage.getItem(key)));
+      return { cartCode: value.cartCode, totalPrice: value.totalPrice };
+    });
+
+    setCartItem(data);
+  };
+
+
+  useEffect(() => {
+    getStorageData()
+  }, [])
+
+
+
+  const handlePayNow = async () => {
+    let totalPrice = 0;
+    for (let i = 0; i < cartList.length; i++) {
+      const element = cartList[i];
+
+      if (
+        element.title.length > 0 &&
+        element.id.length > 0 &&
+        Number(element.qty) > 0 &&
+        Number(element.price) > 0
+      ) {
+        const itemPrice = Number(element.qty) * Number(element.price);
+        totalPrice += itemPrice;
+      } else {
+        console.error("Please fill in all fields for item", i + 1);
+        return;
+      }
+    }
+
+    const cartCode = generateCartCode()
+    const cartData = { cartCode, cartList, totalPrice };
+
+    localStorage.setItem(cartCode, JSON.stringify(cartData));
+    setCartList([{ title: "", id: "", qty: "", price: "" }]);
+
+
+    router.push(`/checkout?id=${cartCode}`)
+
+
+
+
+  };
+
+
   return (
-    <main className="flex min-h-screen flex-col items-center justify-between p-24">
-      <div className="z-10 w-full max-w-5xl items-center justify-between font-mono text-sm lg:flex">
-        <p className="fixed left-0 top-0 flex w-full justify-center border-b border-gray-300 bg-gradient-to-b from-zinc-200 pb-6 pt-8 backdrop-blur-2xl dark:border-neutral-800 dark:bg-zinc-800/30 dark:from-inherit lg:static lg:w-auto  lg:rounded-xl lg:border lg:bg-gray-200 lg:p-4 lg:dark:bg-zinc-800/30">
-          Get started by editing&nbsp;
-          <code className="font-mono font-bold">src/app/page.tsx</code>
-        </p>
-        <div className="fixed bottom-0 left-0 flex h-48 w-full items-end justify-center bg-gradient-to-t from-white via-white dark:from-black dark:via-black lg:static lg:size-auto lg:bg-none">
-          <a
-            className="pointer-events-none flex place-items-center gap-2 p-8 lg:pointer-events-auto lg:p-0"
-            href="https://vercel.com?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            By{" "}
-            <Image
-              src="/vercel.svg"
-              alt="Vercel Logo"
-              className="dark:invert"
-              width={100}
-              height={24}
-              priority
-            />
-          </a>
+    <div className="w-screen flex  ">
+
+      <div className="md:w-3/12 lg:w-2/12  h-screen bg-slate-100 relative sm:w-screen z-10">
+
+        {/* Crt list item show */}
+        <>
+          <p className="mt-2">Cart list item</p>
+          <LuShoppingCart className="absolute right-3 top-2" />
+
+          <div className="h-5"></div>
+
+          {cartItem.map((item: CartInterface) => (
+            <CartItem key={item.cartCode} cartCode={item.cartCode} totalPrice={item.totalPrice} setCartList={setCartList} getStorageData={getStorageData} />
+          ))}
+        </>
+      </div>
+
+      {/* Add product list */}
+
+      <div className="w-full h-screen   sm:w-screen lg:w-10/12  ">
+        {cartList.map((product, index) => {
+          return (
+            <div className="w-full flex items-center" key={index}>
+              <div className="w-11/12 flex items-center border ">
+                <input className="w-9/12 px-1 py-1 mr-2 border border-black" type="text" name="title" placeholder="title" value={product.title} required onChange={(event: React.ChangeEvent<HTMLInputElement>) => handleInputChange(index, event)} />
+                <input className="w-9/12 px-1 py-1 mr-2  border border-black" type="text" name="id" placeholder="Product ID" value={product.id} required onChange={(event: React.ChangeEvent<HTMLInputElement>) => handleInputChange(index, event)} />
+                <input className="w-9/12 px-1 py-1 mr-2  border border-black" type="number" name="qty" placeholder="Product QTY" value={product.qty} required onChange={(event: React.ChangeEvent<HTMLInputElement>) => handleInputChange(index, event)} />
+                <input className="w-9/12 px-1 py-1  border border-black" type="number" name="price" placeholder="Product Price" value={product.price} required onChange={(event: React.ChangeEvent<HTMLInputElement>) => handleInputChange(index, event)} />
+
+
+
+              </div>
+              {cartList.length > 1 && (
+                <AiOutlineMinusCircle className="ml-2 text-2xl text-black" onClick={() => removeInputList(index)} />
+              )}
+
+              {cartList.length - 1 === index && <AiOutlinePlusCircle className=" ml-2 text-2xl text-black" onClick={(e) => { e.preventDefault(); setCartList([...cartList, { title: "", id: "", qty: "", price: "" }]) }} />}
+            </div>
+          )
+        })}
+
+        <div className="flex justify-center mt-5">
+          <button className="border p-2 mr-2  border-black" onClick={handleSave}>Save</button>
+          <button className="border p-2 mr-2  border-black" disabled={subTotal === 0} onClick={handlePayNow}>Pay Now {subTotal > 0 && subTotal}</button>
         </div>
       </div>
 
-      <div className="relative z-[-1] flex place-items-center before:absolute before:h-[300px] before:w-full before:-translate-x-1/2 before:rounded-full before:bg-gradient-radial before:from-white before:to-transparent before:blur-2xl before:content-[''] after:absolute after:-z-20 after:h-[180px] after:w-full after:translate-x-1/3 after:bg-gradient-conic after:from-sky-200 after:via-blue-200 after:blur-2xl after:content-[''] before:dark:bg-gradient-to-br before:dark:from-transparent before:dark:to-blue-700 before:dark:opacity-10 after:dark:from-sky-900 after:dark:via-[#0141ff] after:dark:opacity-40 sm:before:w-[480px] sm:after:w-[240px] before:lg:h-[360px]">
-        <Image
-          className="relative dark:drop-shadow-[0_0_0.3rem_#ffffff70] dark:invert"
-          src="/next.svg"
-          alt="Next.js Logo"
-          width={180}
-          height={37}
-          priority
-        />
-      </div>
 
-      <div className="mb-32 grid text-center lg:mb-0 lg:w-full lg:max-w-5xl lg:grid-cols-4 lg:text-left">
-        <a
-          href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2 className="mb-3 text-2xl font-semibold">
-            Docs{" "}
-            <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
-              -&gt;
-            </span>
-          </h2>
-          <p className="m-0 max-w-[30ch] text-sm opacity-50">
-            Find in-depth information about Next.js features and API.
-          </p>
-        </a>
 
-        <a
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2 className="mb-3 text-2xl font-semibold">
-            Learn{" "}
-            <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
-              -&gt;
-            </span>
-          </h2>
-          <p className="m-0 max-w-[30ch] text-sm opacity-50">
-            Learn about Next.js in an interactive course with&nbsp;quizzes!
-          </p>
-        </a>
 
-        <a
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2 className="mb-3 text-2xl font-semibold">
-            Templates{" "}
-            <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
-              -&gt;
-            </span>
-          </h2>
-          <p className="m-0 max-w-[30ch] text-sm opacity-50">
-            Explore starter templates for Next.js.
-          </p>
-        </a>
-
-        <a
-          href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2 className="mb-3 text-2xl font-semibold">
-            Deploy{" "}
-            <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
-              -&gt;
-            </span>
-          </h2>
-          <p className="m-0 max-w-[30ch] text-balance text-sm opacity-50">
-            Instantly deploy your Next.js site to a shareable URL with Vercel.
-          </p>
-        </a>
-      </div>
-    </main>
+    </div>
   );
 }
