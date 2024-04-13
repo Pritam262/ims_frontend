@@ -26,6 +26,7 @@ export const config ={
         '/',
         '/login',
         '/registration',
+        '/checkout/:path*',
         '/dashboard/:path*',
     ]
 }
