@@ -8,6 +8,7 @@ import { CartInterface } from "../../utility/types";
 import { useRouter } from "next/navigation";
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import Navbar from "../../components/Navbar";
 
 
 export default function Home() {
@@ -173,6 +174,8 @@ export default function Home() {
 
 
   return (
+    <>
+    <Navbar/>
     <div className="w-screen flex  ">
 
       <div className="md:w-3/12 lg:w-2/12  h-screen bg-slate-100 relative sm:w-screen">
@@ -207,7 +210,7 @@ export default function Home() {
               </div>
               {cartList.length > 1 && (
                 <AiOutlineMinusCircle className="ml-2 text-2xl text-black" onClick={() => removeInputList(index)} />
-              )}
+                )}
 
               {cartList.length - 1 === index && <AiOutlinePlusCircle className=" ml-2 text-2xl text-black" onClick={(e) => { e.preventDefault(); setCartList([...cartList, { title: "", id: "", qty: "", price: "" }]) }} />}
             </div>
@@ -224,5 +227,6 @@ export default function Home() {
 
       <ToastContainer />
     </div>
+        </>
   );
 }
