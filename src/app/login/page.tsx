@@ -63,7 +63,7 @@ export default function LoginPage() {
                     <span className="ml-5">Show password</span>
                 </div>
 
-                <p  className="mt-5 ">Don't hane an account click <Link href={'/registration'} className="text-blue-500">here</Link></p>
+                <p  className="mt-5 ">Don&apos;t hane an account click <Link href={'/registration'} className="text-blue-500">here</Link></p>
                 <button className="px-3.5 py-2.5 bg-blue-500 mx-auto mt-5 rounded-md hover:bg-blue-600 hover:text-white duration-700 text-black" disabled={credenctials.password.length < 8} onClick={handleLogin}>Login</button>
 
             </div>
