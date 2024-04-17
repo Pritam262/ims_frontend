@@ -4,7 +4,7 @@ import { AiOutlineMinusCircle, AiOutlinePlayCircle, AiOutlinePlusCircle } from "
 import { LuShoppingCart } from "react-icons/lu";
 
 import CartItem from "../../components/CartItem";
-import { CartInterface } from "../../utility/types";
+import { CartInterface } from "../../utility/cart";
 import { useRouter } from "next/navigation";
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
@@ -20,6 +20,7 @@ export default function Home() {
 
   const [subTotal, setSubTotal] = useState(0);
 
+  
 
   const generateCartCode = () => {
     return String(Date.now().toString())
