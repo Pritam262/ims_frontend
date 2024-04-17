@@ -3,12 +3,14 @@
 
 import { useState } from "react";
 import { useAppContext } from "../../../context/appContext";
-
+import Link from "next/link";
+import { useRouter } from "next/navigation";
 export default function SignUpPage() {
 
     const [isChecked, setIsChecked] = useState(false);
 
-    const { serverIp } = useAppContext();
+    const { serverIp, setIsLogin } = useAppContext();
+    const router = useRouter();
 
     const [credenctials, setCredencials] = useState({ name: '', email: '', conpass: '', password: '', address: ' ' });
 
@@ -29,7 +31,10 @@ export default function SignUpPage() {
                 body: JSON.stringify(credenctials),
             });
 
-
+            if (response.status === 200) {
+                setIsLogin(true);
+                router.push('/')
+            }
         } catch (error) {
             console.error(error)
         }
@@ -71,8 +76,9 @@ export default function SignUpPage() {
                     </div>
                     <span className="ml-5">Show password</span>
                 </div>
+                <p className="mt-5">Have an account click <Link className="text-blue-500" href={'/login'}>here</Link> </p>
 
-                <button className="px-3.5 py-2.5 bg-blue-500 mx-auto mt-5 rounded-md hover:bg-blue-600 hover:text-white duration-700 text-black" disabled={credenctials.conpass != credenctials.password || credenctials.password.length <8} onClick={handleLogin}>Login</button>
+                <button className="px-3.5 py-2.5 bg-blue-500 mx-auto mt-5 rounded-md hover:bg-blue-600 hover:text-white duration-700 text-black" disabled={credenctials.conpass != credenctials.password || credenctials.password.length < 8} onClick={handleLogin}>Login</button>
 
             </div>
 

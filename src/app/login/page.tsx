@@ -4,12 +4,13 @@
 import { useState } from "react";
 import { useAppContext } from "../../../context/appContext";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 export default function LoginPage() {
 
     const router = useRouter();
     const [isChecked, setIsChecked] = useState(false);
 
-    const { serverIp } = useAppContext();
+    const { serverIp, setIsLogin } = useAppContext();
 
     const [credenctials, setCredencials] = useState({ email: '', password: '' });
 
@@ -30,6 +31,7 @@ export default function LoginPage() {
             });
 
             if (response.status === 200) {
+                setIsLogin(true);
                 router.push('/');
             }
 
@@ -51,7 +53,7 @@ export default function LoginPage() {
 
                 <div className="w-full flex items-center justify-between mb-2">
                     <label htmlFor="password">Password</label>
-                    <input type={isChecked ? 'text' : 'password'} name="password"  className="p-2 w-4/5 text-black" onChange={handleInputChange} />
+                    <input type={isChecked ? 'text' : 'password'} name="password" className="p-2 w-4/5 text-black" onChange={handleInputChange} />
                 </div>
 
                 <div className="flex items-center" >
@@ -61,6 +63,7 @@ export default function LoginPage() {
                     <span className="ml-5">Show password</span>
                 </div>
 
+                <p  className="mt-5 ">Don&apos;t hane an account click <Link href={'/registration'} className="text-blue-500">here</Link></p>
                 <button className="px-3.5 py-2.5 bg-blue-500 mx-auto mt-5 rounded-md hover:bg-blue-600 hover:text-white duration-700 text-black" disabled={credenctials.password.length < 8} onClick={handleLogin}>Login</button>
 
             </div>

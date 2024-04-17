@@ -1,7 +1,7 @@
 "use client"
 import React, { useEffect } from 'react';
 import { AiOutlinePlusCircle, AiOutlineMinusCircle } from "react-icons/ai";
-import { CartItemInterface } from '../utility/types';
+import { CartItemInterface } from '../utility/cart';
 
 export default function CartItemComponent( props:CartItemInterface) {
 

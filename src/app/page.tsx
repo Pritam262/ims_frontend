@@ -1,17 +1,18 @@
 'use client'
-import { useAppContext } from "../../context/appContext";
 import { useEffect, useState } from "react";
 import { AiOutlineMinusCircle, AiOutlinePlayCircle, AiOutlinePlusCircle } from "react-icons/ai";
 import { LuShoppingCart } from "react-icons/lu";
 
 import CartItem from "../../components/CartItem";
-import { CartInterface } from "../../utility/types";
+import { CartInterface } from "../../utility/cart";
 import { useRouter } from "next/navigation";
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+import Navbar from "../../components/Navbar";
 
 
 export default function Home() {
 
-  const { serverIp } = useAppContext();
   const router = useRouter();
   const [cartList, setCartList] = useState([{ title: "", id: "", qty: "", price: "" }]);
 
@@ -19,6 +20,7 @@ export default function Home() {
 
   const [subTotal, setSubTotal] = useState(0);
 
+  
 
   const generateCartCode = () => {
     return String(Date.now().toString())
@@ -43,19 +45,13 @@ export default function Home() {
     setCartList(values);
     updateTotalPrice(values)
 
-    //   toast.success(`Remove ${index +1} no. cartList !`, {
-    //     position: toast.POSITION.TOP_CENTER
-    // });
+    toast.success(`Remove ${index + 1} no. cartList !`, {
+      position: "top-center",
+    });
 
 
   };
 
-  // const handleInputChange = (index:number, event:any)=>{
-
-  //   const values = [...cartList];
-  //   values[index][event.target.name] = event.target.value;
-  //   setCartList(values);
-  // }
 
 
   // Input data change
@@ -88,7 +84,10 @@ export default function Home() {
         const itemPrice = Number(element.qty) * Number(element.price);
         totalPrice += itemPrice;
       } else {
-        console.error("Please fill in all fields for item", i + 1);
+        // console.error("Please fill in all fields for item", i + 1);
+        toast.error(`Please fill all the fields !`, {
+          position: "top-center",
+        });
         return;
       }
     }
@@ -103,9 +102,9 @@ export default function Home() {
 
     setCartItem([...cartItem, { cartCode, totalPrice }]);
 
-    //   toast.success(`Product add in your localStorage !`, {
-    //     position: toast.POSITION.TOP_CENTER
-    // });
+    toast.success(`Product add in your localStorage !`, {
+      position: "top-center"
+    });
   };
 
 
@@ -149,7 +148,13 @@ export default function Home() {
         const itemPrice = Number(element.qty) * Number(element.price);
         totalPrice += itemPrice;
       } else {
-        console.error("Please fill in all fields for item", i + 1);
+
+
+        // console.error("Please fill in all fields for item", i + 1);
+
+        toast.error(`Please fill all the fields !`, {
+          position: "top-center",
+      });
         return;
       }
     }
@@ -170,9 +175,11 @@ export default function Home() {
 
 
   return (
+    <>
+    <Navbar/>
     <div className="w-screen flex  ">
 
-      <div className="md:w-3/12 lg:w-2/12  h-screen bg-slate-100 relative sm:w-screen z-10">
+      <div className="md:w-3/12 lg:w-2/12  h-screen bg-slate-100 relative sm:w-screen">
 
         {/* Crt list item show */}
         <>
@@ -204,7 +211,7 @@ export default function Home() {
               </div>
               {cartList.length > 1 && (
                 <AiOutlineMinusCircle className="ml-2 text-2xl text-black" onClick={() => removeInputList(index)} />
-              )}
+                )}
 
               {cartList.length - 1 === index && <AiOutlinePlusCircle className=" ml-2 text-2xl text-black" onClick={(e) => { e.preventDefault(); setCartList([...cartList, { title: "", id: "", qty: "", price: "" }]) }} />}
             </div>
@@ -219,7 +226,8 @@ export default function Home() {
 
 
 
-
+      <ToastContainer />
     </div>
+        </>
   );
 }

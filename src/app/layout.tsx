@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 // import { Inter } from "next/font/google";
 import "./globals.css";
 import AppState from "../../context/appState";
+
 // const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
@@ -14,14 +15,14 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  
   return (
     <html lang="en">
-      <body >
+      <body className="overflow-x-hidden">
         <AppState>
-
-        {children}
+          {children}
         </AppState>
-        </body>
+      </body>
     </html>
   );
 }
