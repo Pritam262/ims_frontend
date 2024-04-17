@@ -8,7 +8,8 @@ import generateTransId from "../../../lib/generatetransid";
 interface CheckoutProduct {
     cartList: [{
         title: string,
-        id: string, qty: number,
+        id: string,
+         qty: number,
         price: number,
     }],
     totalPrice: number,
@@ -60,7 +61,10 @@ export default function CheckoutPage({ params, searchParams }: { params: { slug:
             }
 
             const data = await response.json();
-            // console.log('Sells product added:', data);
+
+            localStorage.removeItem(`${searchParams.id}`)
+            
+            console.log('Sells product added:', data);
         } catch (error: any) {
             throw new Error(error.message);
         }
@@ -151,6 +155,8 @@ export default function CheckoutPage({ params, searchParams }: { params: { slug:
 
                             console.log(await paymentResponse.json())
                             setPaymentId(response.razorpay_payment_id);
+                            localStorage.removeItem(`${searchParams.id}`)
+                            router.push('/');
                         } catch (error) {
                             console.error('Error processing payment:', error);
                             setErrorMessage('Error processing payment');
