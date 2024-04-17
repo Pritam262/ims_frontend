@@ -45,7 +45,6 @@ export function AppProvider({ children }: AppProviderProps) {
         }
       });
       const data = await response.json();
-      console.log('User data ', data);
       setIsLogin(true);
       localStorage.setItem('user', JSON.stringify(data));
     } catch (error) {
@@ -54,14 +53,14 @@ export function AppProvider({ children }: AppProviderProps) {
   }
 
 
-  useEffect(()=>{
-    getUser()
-  },[])
+  // useEffect(()=>{
+  //   getUser()
+  // },[])
 
-  useEffect(() => {
-    isLogin && getUser();
+  // useEffect(() => {
+  //   getUser();
   
-  }, [isLogin])
+  // }, [isLogin])
 
 const contextValue: AppContextType = {
 
