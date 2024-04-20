@@ -1,7 +1,7 @@
 'use client'
 import { createContext, ReactNode, useContext, useState, useEffect, SetStateAction, Dispatch } from "react";
 
-import { razor_pay_api_key } from "../variable"
+import { razor_pay_api_key, SERVERIP } from "../variable"
 type AppContextType = {
   serverIp: String;
   RAZORPAY_API_KEY: string;
@@ -26,7 +26,7 @@ type AppProviderProps = {
 export function AppProvider({ children }: AppProviderProps) {
 
 
-  const serverIp = "http://192.168.50.14:3000";
+  const serverIp = SERVERIP;
 
   const [isLogin, setIsLogin] = useState(false);
 

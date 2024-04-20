@@ -28,5 +28,6 @@ export const config ={
         '/registration',
         '/checkout/:path*',
         '/dashboard/:path*',
+        '/user/:path*',
     ]
 }
