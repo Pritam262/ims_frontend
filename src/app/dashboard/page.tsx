@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { useAppContext } from "../../../context/appContext";
 import Sells from "../../../components/Sells";
-import { SellsDataInterface } from "../../../utility/sells";
+import { SellsDataInterface, SellsProductArrayInterface } from "../../../utility/sells";
 
 
 
@@ -40,8 +40,21 @@ export default function DashboardPage() {
         totalReturnAmount:0,
     };
 
+
+    const initialSalesProduct : SellsProductArrayInterface={
+        salesProduct:[
+            {
+                id:'',
+                title:'',
+                qty:'',
+                price:'',
+                totalPrice:'',
+              }
+        ]
+    }
+
     const [salesData, setSalesData] = useState<SellsDataInterface>(initialSalesData);
-    //   const [products, setproducts] = useState([]);
+      const [products, setproducts] = useState<SellsProductArrayInterface>(initialSalesProduct);
 
 
     const rangeSellData = async (startDate: string, endDate: string) => {
@@ -57,7 +70,7 @@ export default function DashboardPage() {
                 },
             });
             const data = await response.json()
-            console.log("Range sellsbar data", data)
+            // console.log("Range sellsbar data", data)
             setSalesData(data);
         } catch (error) {
             console.error(error);
@@ -80,9 +93,29 @@ export default function DashboardPage() {
     //     setproducts(data.salesProduct);
     //   }
 
+    const sellsData = async (startDate: string, endDate: string) => {
+        const stDate = startDate; // Replace with your desired start date
+        const enDate = endDate; // Replace with your desired end date
+
+        try {
+            const response = await fetch(`${serverIp}/api/sells/salesproduct?startDate=${startDate}&endDate=${endDate}`, {
+                method: 'GET',
+                credentials: 'include',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+            });
+            const data = await response.json()
+            // console.log("Sells Data", data)
+            setproducts(data);
+        } catch (error) {
+            console.error(error);
+        }
+    };
     useEffect(() => {
 
         rangeSellData(startDate, endDate);
+        sellsData(startDate, endDate)
         // getProductData();
 
     }, [])
@@ -138,8 +171,16 @@ export default function DashboardPage() {
 
                         <table className="w-full text-left">
                             <thead className="text-xl bg-slate-400 text-black">
-                                <tr>
+                                {/* <tr>
                                     <th className="p-2">#</th>
+                                    <th className="p-2">PRODUCT NAME</th>
+                                    <th className="p-2">QTY</th>
+                                    <th className="p-2">PRICE</th>
+                                    <th className="p-2">TOTAL</th>
+                                </tr> */}
+                                         <tr>
+                                    <th className="p-2">#</th>
+                                    <th className="p-2">ID</th>
                                     <th className="p-2">PRODUCT NAME</th>
                                     <th className="p-2">QTY</th>
                                     <th className="p-2">PRICE</th>
@@ -148,7 +189,21 @@ export default function DashboardPage() {
 
                             </thead>
                             <tbody>
-                                {salesData.salesData && salesData.salesData.map((data, index) => (
+
+                            {products.salesProduct && products.salesProduct.map((data, index) => (
+                                   
+
+                                        <tr key={index} className="border-black" style={index % 2 ? { backgroundColor: "#c6c6c6", color: "#000" } : {}}>
+                                            <td className="text-sm px-2">{index + 1}</td>
+                                            <td className="text-sm px-2">{data?.id}</td>
+                                            <td className="text-sm px-2">{data?.title}</td>
+                                            <td className="text-sm px-2">{data?.qty}</td>
+                                            <td className="text-sm px-2">{data?.price}</td>
+                                            <td className="text-sm px-2">{data?.totalPrice}</td>
+                                        </tr>
+                                
+                                ))}
+                                {/* {salesData.salesData && salesData.salesData.map((data, index) => (
                                     data.product.map((item, index) => (
 
                                         <tr key={index} className="border-black" style={index % 2 ? { backgroundColor: "#c6c6c6", color: "#000" } : {}}>
@@ -159,7 +214,7 @@ export default function DashboardPage() {
                                             <td className="text-sm px-2">{item.totalPrice}</td>
                                         </tr>
                                     ))
-                                ))}
+                                ))} */}
                             </tbody>
                         </table>
                     </div>
