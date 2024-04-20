@@ -1,23 +1,22 @@
 // 'use client'
-import axios from "axios";
 import Navbar from "../../../components/Navbar";
 import { cookies } from "next/headers";
 import { User } from "../../../utility/user";
 import dateTimeFormat from "../../../lib/dateTimeFormat";
 import Image from "next/image";
 import Link from "next/link";
-// import { useEffect } from "react";
-const cookie = cookies();
+
 
 
 async function getData() {
+  const cookie = cookies();
   const res = await fetch('http://192.168.50.14:3000/api/auth/getuser', { method: 'GET', headers: { 'auth-token': String(cookie.get('authtoken')?.value) } })
   // The return value is *not* serialized
   // You can return Date, Map, Set, etc.
 
   if (!res.ok) {
     // This will activate the closest `error.js` Error Boundary
-    console.log('Failed to fetch data')
+    console.error('Failed to fetch data')
   }
 
   return res.json()
@@ -27,14 +26,8 @@ export default async function UserPage() {
 
 
 
-  // const response = await fetch('http://192.168.50.14:3000/api/auth/getuser',{method:'GET',credentials:'include'});
-
-
-  // const data = await response.json();
-
 
   const data: User = await getData();
-  console.log(data)
 
   return <div className="w-full flex flex-col items-center">
     <Navbar />
