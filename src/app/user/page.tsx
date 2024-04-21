@@ -42,7 +42,7 @@ export default async function UserPage() {
       </div>
 
       <Link href="/user/edit" className="mt-10 border border-black px-2 py-1">Edit profile</Link>
-      <Link href="#" className="mt-10 border border-black px-2 py-1">Change Password</Link>
+      <Link href="/user/changepassword" className="mt-10 border border-black px-2 py-1">Change Password</Link>
     </div>
   </div>
 }
