@@ -16,6 +16,7 @@ interface CheckoutProduct {
 }
 export default function CheckoutPage({ params, searchParams }: { params: { slug: string }; searchParams: { [key: string]: string | string[] | undefined } }) {
 
+
     const { serverIp, RAZORPAY_API_KEY } = useAppContext();
     const router = useRouter();
 
@@ -30,7 +31,6 @@ export default function CheckoutPage({ params, searchParams }: { params: { slug:
         const fetchData = () => {
             const storedData = localStorage.getItem(`${searchParams.id}`);
             const jsonData:CheckoutProduct = storedData && JSON.parse(storedData);
-            console.log(jsonData)
             setData(jsonData);
         };
 
@@ -186,8 +186,6 @@ export default function CheckoutPage({ params, searchParams }: { params: { slug:
     return (
         <div className="w-screen h-screen flex flex-col items-center">
             <div className="w-80 h-96 bg-slate-300 mt-20">
-
-                Checkout page {searchParams?.id}
 
                 <div className="flex items-center border">
                     <div className="w-5 h-5 border border-black mr-2" onClick={() => setMode('cash')}>
